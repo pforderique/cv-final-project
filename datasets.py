@@ -43,8 +43,6 @@ def get_image(location: str, size=500, fov=100, heading=0, pitch=0) -> np.ndarra
         'size': f"{size}x{size}",
     } | pov
 
-    filename = location + ' | ' + ','.join([f'{key}={val}' for (key, val) in pov.items()])
-
     # Only make image request if location actually exists.
     meta_res = requests.get(BASE_META_API_URL, params=meta_params).json()
 
