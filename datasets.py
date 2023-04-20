@@ -15,7 +15,7 @@ BASE_META_API_URL = 'https://maps.googleapis.com/maps/api/streetview/metadata?'
 
 BOSTON_RENT_DATASET_URL = 'https://raw.githubusercontent.com/pforderique/www.pforderique.com/main/server/data/datasets/boston_rent_prices.csv'
 
-def get_image(location: str, size=500, fov=100, heading=0, pitch=0) -> np.ndarray:
+def get_image(location: str, size=800, fov=100, heading=0, pitch=0) -> np.ndarray:
     """Given a street location, returns the nparray image rep. from the API call
 
     See more detailed descriptions of params here:
@@ -75,7 +75,9 @@ def get_rent_dataset() -> pd.DataFrame:
     data = pd.read_csv(BOSTON_RENT_DATASET_URL)
 
     # Remove the few entries that have rent price ranges (those that have '-')
+    # or those that do not disclose them
     data = data.drop(data[data.Rent.str.contains('-')].index)
+    data = data.drop(data[data.Address.str.contains('Address Not Disclosed')].index)
 
     # Map entries: '$2,300/mo' -> 2300
     data['Rent'] = data['Rent'].str.replace('/mo', '')
