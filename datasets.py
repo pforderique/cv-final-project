@@ -79,6 +79,10 @@ def get_rent_dataset() -> pd.DataFrame:
     data = data.drop(data[data.Rent.str.contains('-')].index)
     data = data.drop(data[data.Address.str.contains('Address Not Disclosed')].index)
 
+    # Remove the ' #x' from the address, then drop duplicates
+    data['Address'] = data['Address'].str[:-3]
+    data = data.drop_duplicates(subset=['Address'])
+
     # Map entries: '$2,300/mo' -> 2300
     data['Rent'] = data['Rent'].str.replace('/mo', '')
     data['Rent'] = data['Rent'].str.replace('$', '')

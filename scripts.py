@@ -14,16 +14,18 @@ from datasets import get_image, get_rent_dataset
 
 def generate_dataset(
         addresses: Iterable[str],
+        rent_prices: Iterable[str],
         folderpath: str,
         params: dict = None,
         start=0,
         stop: int = None):
     """Generates the street view dataset and saves it to specified folder.
         Change internal params for different views. Tags on metadata to filename.
-            Ex: "folderpath/address+idx+size=800,fov=100,heading=0,pitch=0.jpg"
+            Ex: "folderpath/address+idx=idx+rent=2500+size=800,fov=100,heading=0,pitch=0.jpg"
 
     Args:
         addresses (Iterable[str]): iterable of addresses to generate images for
+        addresses (Iterable[str]): iterable of prices to generate labels for imagess
         folderpath (str): path of folder to store images
         params (dict): parameters to image query - including size, fov, heading, and pitch. Default if None.
         start (int, optional): start index in iterable. Defaults to 0.
@@ -65,9 +67,9 @@ def generate_dataset(
             continue
 
         # Write the image
-        filename = f'{address}+{idx}+{params_suffix}.jpg'
+        rent = rent_prices[idx]
+        filename = f'{address}+{idx=}+{rent=}+{params_suffix}.jpg'
         path = folderpath + filename
-        print(path)
         if not cv2.imwrite(path, img):
             logging.error(f'({current}/{batch_size}) Writing Error. Image skipped.')
             total_skipped += 1
@@ -88,8 +90,9 @@ if __name__ == '__main__':
     ### STATUS: [ALREADY RAN] ###
     f = generate_dataset(
         addresses=rent_dataset['Address'],
+        rent_prices=rent_dataset['Rent'],
         folderpath='data/',
         params={'size': 800, 'fov': 100, 'heading': 0, 'pitch': 0},
         start=0, 
-        end=100)
+        stop=5)
     print(f)
