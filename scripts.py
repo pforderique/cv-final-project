@@ -11,6 +11,8 @@ import cv2
 
 from datasets import get_image, get_rent_dataset
 
+# Make sure to change this if using colab.
+data_dir = 'data/'
 
 def generate_dataset(
         addresses: Iterable[str],
@@ -38,10 +40,11 @@ def generate_dataset(
     stop = len(addresses) if stop is None else stop
 
     logging.basicConfig(
-        filename='scripts.log',
+        filename=data_dir + '../scripts.log',
         format='%(asctime)s [%(levelname)s]: %(message)s',
         datefmt='%d-%b-%y %H:%M:%S',
-        level=logging.INFO)
+        level=logging.INFO,
+        force=True)
     logging.info(f'[STARTED] Generate Dataset Called w/{(start, stop, params)}')
 
     # Create the directory if not exist
@@ -91,7 +94,7 @@ if __name__ == '__main__':
     f = generate_dataset(
         addresses=rent_dataset['Address'],
         rent_prices=rent_dataset['Rent'],
-        folderpath='data/',
+        folderpath=data_dir,
         params={'size': 800, 'fov': 100, 'heading': 0, 'pitch': 0},
         start=0, 
         stop=5)
