@@ -18,6 +18,9 @@ BOSTON_RENT_DATASET_URL = 'https://raw.githubusercontent.com/pforderique/www.pfo
 def get_image(location: str, size=500, fov=100, heading=0, pitch=0) -> np.ndarray:
     """Given a street location, returns the nparray image rep. from the API call
 
+    See more detailed descriptions of params here:
+    https://developers.google.com/maps/documentation/streetview/request-streetview 
+
     Args:
         location (str): The street location
         size (int, optional): size of image. Defaults to 500.
@@ -47,7 +50,8 @@ def get_image(location: str, size=500, fov=100, heading=0, pitch=0) -> np.ndarra
     meta_res = requests.get(BASE_META_API_URL, params=meta_params).json()
 
     if meta_res['status'] != 'OK':
-        print(f'location "{location}" was not found.')
+        print(f'''location "{location}" was not found.
+          Is it a valid location? Did you update the API key?''')
         return None
     
     # Make the image request and save as np array
