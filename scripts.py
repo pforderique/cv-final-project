@@ -8,6 +8,7 @@ import os
 from collections.abc import Iterable
 
 import cv2
+import numpy as np
 
 from datasets import get_image, get_rent_dataset
 
@@ -83,6 +84,33 @@ def generate_dataset(
     logging.info(f'[FINISHED] {total_done}/{batch_size} were saved, {total_skipped}/{batch_size} were skipped.')
     
     return total_done == batch_size
+
+# get a batch of images from our image "dataset" on gdrive
+def load_image_batch(start=0, stop=None) -> list[np.ndarray]:
+    filenames = os.listdir(data_dir)
+
+    stop = len(filenames) if stop is None else stop
+
+    images = []
+    for filename in filenames[start:stop]:
+        # all data here should end in jpg, but just in case
+        if filename.endswith("jpg"):
+            img = cv2.imread(data_dir + filename)
+            images.append(img)
+
+    return images
+
+# batch generator
+def batch_loader(batch_size=32):
+    total = len(os.listdir(data_dir))
+    start, stop = 0, batch_size
+
+    while start < total:
+        yield load_image_batch(start, stop)
+
+        start += batch_size
+        stop += batch_size
+
 if __name__ == '__main__':
 
     rent_dataset = get_rent_dataset()
