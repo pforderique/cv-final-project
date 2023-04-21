@@ -40,7 +40,7 @@ def generate_dataset(
     stop = len(addresses) if stop is None else stop
 
     logging.basicConfig(
-        filename=data_dir + '../scripts.log',
+        filename= data_dir + '../scripts.log',
         format='%(asctime)s [%(levelname)s]: %(message)s',
         datefmt='%d-%b-%y %H:%M:%S',
         level=logging.INFO,
@@ -56,7 +56,7 @@ def generate_dataset(
     batch_size = stop - start
     current, total_done, total_skipped = 0, 0, 0
 
-    for idx, address in enumerate(addresses[start:stop]):
+    for idx, (address, rent) in enumerate(zip(addresses[start:stop], rent_prices[start:stop])):
         current += 1
 
         # Call API to generate the image
@@ -70,8 +70,7 @@ def generate_dataset(
             continue
 
         # Write the image
-        rent = rent_prices[idx]
-        filename = f'{address}+{idx=}+{rent=}+{params_suffix}.jpg'
+        filename = f'{address}+row={start+idx}+{rent=}+{params_suffix}.jpg'
         path = folderpath + filename
         if not cv2.imwrite(path, img):
             logging.error(f'({current}/{batch_size}) Writing Error. Image skipped.')
@@ -84,18 +83,17 @@ def generate_dataset(
     logging.info(f'[FINISHED] {total_done}/{batch_size} were saved, {total_skipped}/{batch_size} were skipped.')
     
     return total_done == batch_size
-
 if __name__ == '__main__':
 
     rent_dataset = get_rent_dataset()
     print(len(rent_dataset))
 
     ### STATUS: [ALREADY RAN] ###
-    f = generate_dataset(
-        addresses=rent_dataset['Address'],
-        rent_prices=rent_dataset['Rent'],
-        folderpath=data_dir,
-        params={'size': 800, 'fov': 100, 'heading': 0, 'pitch': 0},
-        start=0, 
-        stop=5)
-    print(f)
+    # f = generate_dataset(
+    #     addresses=rent_dataset['Address'],
+    #     rent_prices=rent_dataset['Rent'],
+    #     folderpath=data_dir,
+    #     params={'size': 800, 'fov': 100, 'heading': 0, 'pitch': 0},
+    #     start=0, 
+    #     stop=5)
+    # print(f)
